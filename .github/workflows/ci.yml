@@ -30,6 +30,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
+      - name: Install dependencies
+        run: npm install
+
+      - name: Compress node_modules
+        run: tar -czf node_modules.tar.gz node_modules
+
       - name: Upload compressed node_modules
         uses: actions/upload-artifact@v4
         with:
