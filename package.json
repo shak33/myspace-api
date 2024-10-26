@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "TS_NODE_PROJECT=tsconfig.development.json ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/server.ts --log-level debug"
+    "dev": "TS_NODE_PROJECT=tsconfig.development.json ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/server.ts --log-level debug",
+    "build": "tsc --build tsconfig.production.json"
   },
   "keywords": [],
   "author": "",
