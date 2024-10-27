@@ -1,8 +1,15 @@
 require('dotenv').config();
 import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
+import bodyParser from 'body-parser';
+
+import { API_ROUTE_AUTH } from '@/routes/routes';
+import authRoutes from '@/routes/auth/auth.route';
 
 export const app = express();
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 const corsOptions = {
   origin: process.env.CLIENT_URL,
@@ -22,6 +29,8 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
 });
+
+app.use(API_ROUTE_AUTH, authRoutes);
 
 app.all('*', (req, res) => {
   res.status(404).json({
