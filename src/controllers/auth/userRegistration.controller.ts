@@ -9,7 +9,7 @@ import { User, Profile } from '@prisma/client';
 type RegistrationBody = Pick<User, 'email' | 'password'> &
   Pick<Profile, 'firstName' | 'lastName'>;
 
-export const userRegistration = async (
+export const userRegistrationController = async (
   req: Request,
   res: Response,
   next: NextFunction
