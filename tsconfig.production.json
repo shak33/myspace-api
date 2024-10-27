@@ -5,5 +5,5 @@
     "noEmit": false,
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["__tests__", "node_modules"]
 }
