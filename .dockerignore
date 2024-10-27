@@ -1,0 +1,12 @@
+# Node modules folder
+*/node_modules
+
+# Build folder
+*/dist
+
+# Docker file
+Dockerfile
+
+# Log files
+*.log
+npm-debug.log*
