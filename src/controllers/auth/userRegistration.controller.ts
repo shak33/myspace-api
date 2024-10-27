@@ -3,11 +3,7 @@ import bcrypt from 'bcrypt';
 import { createSecretToken } from '@/controllers/auth/utils/createSecretToken.util';
 import { sendMail } from '@/utils/sendMail.util';
 import { prisma } from '@/db';
-
-import { User, Profile } from '@prisma/client';
-
-type RegistrationBody = Pick<User, 'email' | 'password'> &
-  Pick<Profile, 'firstName' | 'lastName'>;
+import { RegistrationBody } from '@/models/auth/RegistrationBody.type';
 
 export const userRegistrationController = async (
   req: Request,
