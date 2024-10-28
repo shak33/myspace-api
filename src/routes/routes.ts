@@ -15,4 +15,5 @@ export const profileRoutes = {
 
 export const postRoutes = {
   createPost: '/create',
+  updatePost: '/update/:postId',
 } as const;

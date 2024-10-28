@@ -15,11 +15,11 @@ datasource db {
 
 model Post {
   id Int @id @default(autoincrement())
-  content String
+  content String @db.VarChar(1000)
   visible Boolean @default(true)
 
-  user User @relation(fields: [userId], references: [id])
-  userId Int @unique
+  user User @relation(fields: [authorId], references: [id])
+  authorId Int @unique
 }
 
 model ProfilePicture {
