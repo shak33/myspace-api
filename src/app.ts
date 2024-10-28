@@ -3,8 +3,9 @@ import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 
-import { API_ROUTE_AUTH } from '@/routes/routes';
+import { API_ROUTE_AUTH, API_ROUTE_PROFILE } from '@/routes/routes';
 import authRoutes from '@/routes/auth/auth.route';
+import profileRoutes from '@/routes/profile/profile.route';
 
 export const app = express();
 
@@ -31,6 +32,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use(API_ROUTE_AUTH, authRoutes);
+app.use(API_ROUTE_PROFILE, profileRoutes);
 
 app.all('*', (req, res) => {
   res.status(404).json({
