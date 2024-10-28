@@ -1,7 +1,7 @@
 import { z, ZodSchema } from 'zod';
 import { Request, Response, NextFunction } from 'express';
 
-export const requestValidation =
+export const requestValidationMiddleware =
   (schema: ZodSchema) => (req: Request, res: Response, next: NextFunction) => {
     try {
       schema.parse(req.body);

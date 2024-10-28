@@ -10,6 +10,7 @@
     "skipLibCheck": true,
     "baseUrl": "./",
     "paths": {
+      "@/configs/*": ["src/configs/*"],
       "@/controllers/*": ["src/controllers/*"],
       "@/middlewares/*": ["src/middlewares/*"],
       "@/models/*": ["src/models/*"],
