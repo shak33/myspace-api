@@ -3,23 +3,20 @@ import { removeFileFromS3Util } from '@/utils/removeFileFromS3.util';
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '@/db';
 import sharp from 'sharp';
+import {
+  PROFILE_PICTURE_MAX_FILE_SIZE,
+  PROFILE_PICTURE_MAX_IMAGE_WIDTH,
+  PROFILE_PICTURE_MAX_IMAGE_HEIGHT,
+  PROFILE_PICTURE_ACCEPTED_IMAGE_TYPES,
+  PROFILE_PICTURE_VALIDATION_IMAGE_TYPE,
+  PROFILE_PICTURE_VALIDATION_IMAGE_SIZE,
+} from '@/configs/profilePicture.config';
 
 export const editProfilePictureController = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const MAX_MB_FILE_SIZE = 10;
-  const MAX_FILE_SIZE = 1024 * 1024 * MAX_MB_FILE_SIZE;
-  const MAX_IMAGE_WIDTH = 1024;
-  const MAX_IMAGE_HEIGHT = 1024;
-  const ACCEPTED_IMAGE_TYPES = [
-    'image/jpeg',
-    'image/jpg',
-    'image/png',
-    'image/webp',
-  ];
-
   try {
     const profilePicture = req.file;
 
@@ -30,25 +27,27 @@ export const editProfilePictureController = async (
       });
     }
 
-    if (!ACCEPTED_IMAGE_TYPES.includes(profilePicture.mimetype)) {
+    if (
+      !PROFILE_PICTURE_ACCEPTED_IMAGE_TYPES.includes(profilePicture.mimetype)
+    ) {
       return res.status(400).json({
         success: false,
         message: 'Validation error',
         errors: {
           fields: {
-            profilePicture: `Only .jpg, .jpeg, .webp, and .png formats are supported`,
+            profilePicture: PROFILE_PICTURE_VALIDATION_IMAGE_TYPE,
           },
         },
       });
     }
 
-    if (profilePicture.size > MAX_FILE_SIZE) {
+    if (profilePicture.size > PROFILE_PICTURE_MAX_FILE_SIZE) {
       return res.status(400).json({
         success: false,
         message: 'Validation error',
         errors: {
           fields: {
-            profilePicture: `Max image size is ${MAX_MB_FILE_SIZE}MB`,
+            profilePicture: PROFILE_PICTURE_VALIDATION_IMAGE_SIZE,
           },
         },
       });
@@ -81,8 +80,8 @@ export const editProfilePictureController = async (
 
     const compressedFileToUpload = await sharp(profilePicture.buffer)
       .resize({
-        width: MAX_IMAGE_WIDTH,
-        height: MAX_IMAGE_HEIGHT,
+        width: PROFILE_PICTURE_MAX_IMAGE_WIDTH,
+        height: PROFILE_PICTURE_MAX_IMAGE_HEIGHT,
         fit: 'inside',
       })
       .jpeg({ quality: 80 })
@@ -120,6 +119,7 @@ export const editProfilePictureController = async (
       message: 'Picture has been updated',
     });
   } catch (error) {
+    console.log(error, 'catch');
     res.status(500).json({
       success: false,
       message: 'Internal server error',

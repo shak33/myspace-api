@@ -10,10 +10,11 @@ import registerUserData from '@/tests/fixtures/user/registerUser.json';
 import loginUserData from '@/tests/fixtures/user/loginUser.json';
 
 describe('ROUTE /api/v1/auth', () => {
-  describe('/register', () => {
+  describe(authRoutes.register, () => {
     before(async () => {
+      await prisma.profilePicture.deleteMany();
       await prisma.profile.deleteMany();
-      await prisma.user.deleteMany({});
+      await prisma.user.deleteMany();
     });
 
     it('should return 400 with errored field email', async () => {
@@ -47,7 +48,7 @@ describe('ROUTE /api/v1/auth', () => {
     });
   });
 
-  describe('/login', () => {
+  describe(authRoutes.login, () => {
     before(async () => {
       await prisma.profile.deleteMany();
       await prisma.user.deleteMany({});
