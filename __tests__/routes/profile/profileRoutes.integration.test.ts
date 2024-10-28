@@ -1,9 +1,8 @@
-import request from 'supertest';
 import { expect } from 'chai';
 import { server } from 'globalSetup.mocha';
 
 import { prisma } from '@/db';
-import { API_ROUTE_PROFILE, profileRoutes } from '@/routes/routes';
+import { profileRoutes } from '@/routes/routes';
 import { createUserFactory } from '@/tests/factories/user/createUser.factory';
 import { loginAndGetTokenUtil } from '@/tests/utils/loginAndGetToken.util';
 import {
@@ -11,10 +10,12 @@ import {
   PROFILE_PICTURE_VALIDATION_IMAGE_TYPE,
   PROFILE_PICTURE_VALIDATION_IMAGE_SIZE,
 } from '@/configs/profilePicture.config';
-import sharp from 'sharp';
+import { generateProfilePictureToUploadUtil } from '@/tests/routes/profile/utils/generateProfilePictureToUpload.util';
+import { uploadProfilePictureUtil } from '@/tests/routes/profile/utils/uploadProfilePicture.util';
+import { removeProfilePictureUtil } from '@/tests/routes/profile/utils/removeProfilePicture.util';
 
 describe('ROUTE /api/v1/profile', () => {
-  describe(profileRoutes.uploadProfilePicture, () => {
+  describe(`${profileRoutes.uploadProfilePicture} (PUT)`, () => {
     before(async () => {
       await prisma.profilePicture.deleteMany();
       await prisma.profile.deleteMany();
@@ -24,16 +25,13 @@ describe('ROUTE /api/v1/profile', () => {
 
     it('should return 400 with file size validation error', async () => {
       const token = await loginAndGetTokenUtil(server);
-
       const largeFileBuffer = Buffer.alloc(PROFILE_PICTURE_MAX_FILE_SIZE + 1);
-
-      const res = await request(server)
-        .post(`${API_ROUTE_PROFILE}${profileRoutes.uploadProfilePicture}`)
-        .set('Authorization', `Bearer ${token}`)
-        .attach('profilePicture', largeFileBuffer, {
-          filename: 'large-image.jpg',
-          contentType: 'image/jpeg',
-        });
+      const res = await uploadProfilePictureUtil({
+        token,
+        buffer: largeFileBuffer,
+        fileName: 'large-image.jpg',
+        contentType: 'image/jpeg',
+      });
 
       expect(res.status).to.equal(400);
       expect(res.body.errors.fields.profilePicture).to.include(
@@ -43,19 +41,16 @@ describe('ROUTE /api/v1/profile', () => {
 
     it('should return 400 with file type validation error', async () => {
       const token = await loginAndGetTokenUtil(server);
-
       const invalidFileBuffer = Buffer.from(
         'This is a test file content',
         'utf-8'
       );
-
-      const res = await request(server)
-        .post(`${API_ROUTE_PROFILE}${profileRoutes.uploadProfilePicture}`)
-        .set('Authorization', `Bearer ${token}`)
-        .attach('profilePicture', invalidFileBuffer, {
-          filename: 'test-file.txt',
-          contentType: 'text/plain',
-        });
+      const res = await uploadProfilePictureUtil({
+        token,
+        buffer: invalidFileBuffer,
+        fileName: 'test-file.txt',
+        contentType: 'text/plain',
+      });
 
       expect(res.status).to.equal(400);
       expect(res.body.errors.fields.profilePicture).to.include(
@@ -65,28 +60,52 @@ describe('ROUTE /api/v1/profile', () => {
 
     it('should return 201 with success set to true', async () => {
       const token = await loginAndGetTokenUtil(server);
-
-      const validFileBuffer = await sharp({
-        create: {
-          width: 100,
-          height: 100,
-          channels: 3,
-          background: { r: 255, g: 255, b: 255 },
-        },
-      })
-        .jpeg({ quality: 80 })
-        .toBuffer();
-
-      const res = await request(server)
-        .post(`${API_ROUTE_PROFILE}${profileRoutes.uploadProfilePicture}`)
-        .set('Authorization', `Bearer ${token}`)
-        .attach('profilePicture', validFileBuffer, {
-          filename: 'valid-image.jpg',
-          contentType: 'image/jpeg',
-        });
+      const buffer = await generateProfilePictureToUploadUtil();
+      const res = await uploadProfilePictureUtil({
+        token,
+        buffer,
+        fileName: 'valid-image.jpg',
+        contentType: 'image/jpeg',
+      });
 
       expect(res.status).to.equal(201);
       expect(res.body.success).to.be.true;
+    });
+  });
+
+  describe(`${profileRoutes.uploadProfilePicture} (DELETE)`, () => {
+    before(async () => {
+      await prisma.profilePicture.deleteMany();
+      await prisma.profile.deleteMany();
+      await prisma.user.deleteMany({});
+      await createUserFactory();
+    });
+
+    it(`should return 410 on profile picture removal, if there's no photo`, async () => {
+      const token = await loginAndGetTokenUtil(server);
+      const res = await removeProfilePictureUtil(token);
+
+      expect(res.status).to.equal(410);
+      expect(res.body.message).to.include(
+        `Logged in user doesn't have profile picture set`
+      );
+    });
+
+    it('should return 200 on profile picture removal that exists', async () => {
+      const token = await loginAndGetTokenUtil(server);
+      const buffer = await generateProfilePictureToUploadUtil();
+      const uploadedProfilePicture = await uploadProfilePictureUtil({
+        token,
+        buffer,
+        fileName: 'valid-image.jpg',
+        contentType: 'image/jpeg',
+      });
+      const removedProfilePicture = await removeProfilePictureUtil(token);
+
+      expect(uploadedProfilePicture.status).to.equal(201);
+      expect(uploadedProfilePicture.body.success).to.be.true;
+      expect(removedProfilePicture.status).to.equal(200);
+      expect(removedProfilePicture.body.success).to.be.true;
     });
   });
 });
