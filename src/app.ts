@@ -7,10 +7,12 @@ import {
   API_ROUTE_AUTH,
   API_ROUTE_PROFILE,
   API_ROUTE_POST,
+  API_ROUTE_POSTS,
 } from '@/routes/routes';
 import authRoutes from '@/routes/auth/auth.route';
 import profileRoutes from '@/routes/profile/profile.route';
 import postRoutes from '@/routes/post/post.route';
+import postsRoutes from '@/routes/posts/posts.route';
 
 export const app = express();
 
@@ -39,6 +41,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 app.use(API_ROUTE_AUTH, authRoutes);
 app.use(API_ROUTE_PROFILE, profileRoutes);
 app.use(API_ROUTE_POST, postRoutes);
+app.use(API_ROUTE_POSTS, postsRoutes);
 
 app.all('*', (req, res) => {
   res.status(404).json({
