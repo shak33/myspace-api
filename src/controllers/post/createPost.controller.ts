@@ -13,7 +13,7 @@ export const createPostController = async (
 
     const createPost = await prisma.post.create({
       data: {
-        userId,
+        authorId: userId,
         content,
         visible,
       },

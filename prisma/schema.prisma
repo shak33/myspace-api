@@ -15,11 +15,14 @@ datasource db {
 
 model Post {
   id Int @id @default(autoincrement())
-  content String
+  content String @db.VarChar(1000)
   visible Boolean @default(true)
 
-  user User @relation(fields: [userId], references: [id])
-  userId Int @unique
+  user User @relation(fields: [authorId], references: [id])
+  authorId Int @unique
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model ProfilePicture {
@@ -31,6 +34,9 @@ model ProfilePicture {
 
   profile Profile @relation(fields: [profileId], references: [id])
   profileId Int @unique
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Profile {
@@ -42,6 +48,9 @@ model Profile {
   user User @relation(fields: [userId], references: [id])
   userId Int @unique
   profilePhoto ProfilePicture? @relation
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model User {
@@ -50,4 +59,7 @@ model User {
   password String
   profile Profile?
   posts Post[]
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

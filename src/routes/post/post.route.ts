@@ -8,6 +8,8 @@ import { isAuthenticatedMiddleware } from '@/middlewares/isAuthenticated.middlew
 import { createPostController } from '@/controllers/post/createPost.controller';
 
 import { createPostValidation } from '@/controllers/post/models/createPost.validation';
+import { updatePostValidation } from '@/controllers/post/models/updatePost.validation';
+import { updatePostController } from '@/controllers/post/updatePost.controller';
 
 const router = express.Router();
 
@@ -16,6 +18,13 @@ router.post(
   isAuthenticatedMiddleware,
   requestValidationMiddleware(createPostValidation),
   createPostController
+);
+
+router.patch(
+  postRoutes.updatePost,
+  isAuthenticatedMiddleware,
+  requestValidationMiddleware(updatePostValidation),
+  updatePostController
 );
 
 export default router;
