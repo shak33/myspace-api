@@ -53,8 +53,9 @@ export const isAuthenticatedMiddleware = async (
     // @ts-ignore
     req.user = {
       email: user.email,
-      userId: user.id,
-      profileId: user.profile?.id,
+      id: user.id,
+      userId: user.userId,
+      profileId: user.profile?.profileId,
     };
     next();
   } catch (error) {

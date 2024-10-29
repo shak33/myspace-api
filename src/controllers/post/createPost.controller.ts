@@ -8,12 +8,12 @@ export const createPostController = async (
 ) => {
   try {
     // @ts-ignore
-    const userId = req.user.userId;
+    const { id } = req.user;
     const { content, visible } = req.body;
 
     const createPost = await prisma.post.create({
       data: {
-        authorId: userId,
+        authorId: id,
         content,
         visible,
       },

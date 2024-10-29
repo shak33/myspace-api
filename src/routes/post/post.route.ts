@@ -6,10 +6,10 @@ import { requestValidationMiddleware } from '@/middlewares/requestValidation.mid
 import { isAuthenticatedMiddleware } from '@/middlewares/isAuthenticated.middleware';
 
 import { createPostController } from '@/controllers/post/createPost.controller';
+import { updatePostController } from '@/controllers/post/updatePost.controller';
 
 import { createPostValidation } from '@/controllers/post/models/createPost.validation';
 import { updatePostValidation } from '@/controllers/post/models/updatePost.validation';
-import { updatePostController } from '@/controllers/post/updatePost.controller';
 
 const router = express.Router();
 
