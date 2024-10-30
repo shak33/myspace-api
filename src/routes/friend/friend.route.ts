@@ -4,14 +4,14 @@ import { friendRoutes } from '@/routes/routes';
 
 import { isAuthenticatedMiddleware } from '@/middlewares/isAuthenticated.middleware';
 
-import { addFriendController } from '@/controllers/friend/addFriend.controller';
+import { sendFriendRequestController } from '@/controllers/friend/sendFriendRequest.controller';
 
 const router = express.Router();
 
 router.post(
-  friendRoutes.addFriend,
+  friendRoutes.sendFriendRequest,
   isAuthenticatedMiddleware,
-  addFriendController
+  sendFriendRequestController
 );
 
 export default router;

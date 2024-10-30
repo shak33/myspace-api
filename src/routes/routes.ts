@@ -29,5 +29,5 @@ export const postsRoutes = {
 
 // Add and remove friends
 export const friendRoutes = {
-  addFriend: '/add/:friendId',
+  sendFriendRequest: '/send-request/:friendId',
 } as const;

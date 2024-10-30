@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { prisma } from '@/db';
 import { sendMail } from '@/utils/sendMail.util';
 
-export const addFriendController = async (
+export const sendFriendRequestController = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -10,11 +10,11 @@ export const addFriendController = async (
   try {
     // @ts-ignore
     const loggedInUser = req.user;
-    const { userId } = req.params;
+    const { friendId } = req.params;
 
     const user = await prisma.user.findUnique({
       where: {
-        userId,
+        userId: friendId,
       },
       include: {
         profile: true,
