@@ -6,6 +6,7 @@ import { isAuthenticatedMiddleware } from '@/middlewares/isAuthenticated.middlew
 
 import { sendFriendRequestController } from '@/controllers/friend/sendFriendRequest.controller';
 import { removeFriendController } from '@/controllers/friend/removeFriend.controller';
+import { withdrawFriendRequestController } from '@/controllers/friend/withdrawFriendRequest.controller';
 
 const router = express.Router();
 
@@ -19,6 +20,12 @@ router.delete(
   friendRoutes.removeFriend,
   isAuthenticatedMiddleware,
   removeFriendController
+);
+
+router.delete(
+  friendRoutes.withdrawFriendRequest,
+  isAuthenticatedMiddleware,
+  withdrawFriendRequestController
 );
 
 export default router;
