@@ -44,10 +44,10 @@ export const userRegistrationController = async (
 
     const token = createSecretToken(newUser.id);
 
-    sendMail({
+    const sendRegistrationMail = await sendMail({
       email,
       subject: 'Welcome to MySpace!',
-      template: 'registration-notification.ejs',
+      template: '/auth/registration-notification.ejs',
       data: {
         user: {
           firstName,
@@ -57,7 +57,7 @@ export const userRegistrationController = async (
       },
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: 'User registered successfully',
       data: {
@@ -65,7 +65,7 @@ export const userRegistrationController = async (
       },
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Internal server error',
     });
