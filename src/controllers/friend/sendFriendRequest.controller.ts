@@ -12,6 +12,13 @@ export const sendFriendRequestController = async (
     const loggedInUser = req.user;
     const { friendId } = req.params;
 
+    if (loggedInUser.userId === friendId) {
+      return res.status(400).send({
+        success: false,
+        message: `You can't send a friend request to yourself`,
+      });
+    }
+
     const user = await prisma.user.findUnique({
       where: {
         userId: friendId,
