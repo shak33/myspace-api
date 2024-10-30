@@ -33,4 +33,5 @@ export const friendRoutes = {
   withdrawFriendRequest: '/withdraw-request/:friendId',
   removeFriend: '/remove/:friendId',
   rejectFriendRequest: '/reject-request/:friendId',
+  acceptFriendRequest: '/accept-request/:friendId',
 } as const;

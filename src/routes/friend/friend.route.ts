@@ -8,6 +8,7 @@ import { sendFriendRequestController } from '@/controllers/friend/sendFriendRequ
 import { removeFriendController } from '@/controllers/friend/removeFriend.controller';
 import { withdrawFriendRequestController } from '@/controllers/friend/withdrawFriendRequest.controller';
 import { rejectFriendRequestController } from '@/controllers/friend/rejectFriendRequest.controller';
+import { acceptFriendRequestController } from '@/controllers/friend/acceptFriendRequest.controller';
 
 const router = express.Router();
 
@@ -33,6 +34,12 @@ router.delete(
   friendRoutes.rejectFriendRequest,
   isAuthenticatedMiddleware,
   rejectFriendRequestController
+);
+
+router.post(
+  friendRoutes.acceptFriendRequest,
+  isAuthenticatedMiddleware,
+  acceptFriendRequestController
 );
 
 export default router;

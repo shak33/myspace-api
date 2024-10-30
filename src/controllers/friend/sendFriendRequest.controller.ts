@@ -83,6 +83,7 @@ export const sendFriendRequestController = async (
       message: 'Friend request has been sent',
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       success: false,
       message: 'Internal server error',

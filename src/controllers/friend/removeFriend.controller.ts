@@ -9,11 +9,11 @@ export const removeFriendController = async (
   try {
     // @ts-ignore
     const loggedInUser = req.user;
-    const { userId } = req.params;
+    const { friendId } = req.params;
 
     const user = await prisma.user.findUnique({
       where: {
-        userId,
+        userId: friendId,
       },
       include: {
         friendsAsUser1: {
@@ -66,6 +66,7 @@ export const removeFriendController = async (
       message: 'Successfully removed friend from your friends list',
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       success: false,
       message: 'Internal server error',

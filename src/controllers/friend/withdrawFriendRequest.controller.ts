@@ -9,11 +9,11 @@ export const withdrawFriendRequestController = async (
   try {
     // @ts-ignore
     const loggedInUser = req.user;
-    const { userId } = req.params;
+    const { friendId } = req.params;
 
     const user = await prisma.user.findUnique({
       where: {
-        userId,
+        userId: friendId,
       },
       include: {
         receivedFriendRequests: {
@@ -60,6 +60,7 @@ export const withdrawFriendRequestController = async (
       message: 'Successfully canceled your friend invitation',
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       success: false,
       message: 'Internal server error',
