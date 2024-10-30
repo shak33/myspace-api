@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '@/db';
 
-export const withdrawFriendRequestController = async (
+export const rejectFriendRequestController = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -16,8 +16,8 @@ export const withdrawFriendRequestController = async (
         userId,
       },
       include: {
-        receivedFriendRequests: {
-          where: { userId1: loggedInUser.id },
+        sentFriendRequests: {
+          where: { userId2: loggedInUser.id },
         },
       },
     });
@@ -29,35 +29,35 @@ export const withdrawFriendRequestController = async (
       });
     }
 
-    if (user.receivedFriendRequests.length === 0) {
-      return res.status(400).json({
+    if (user.sentFriendRequests.length === 0) {
+      return res.status(404).json({
         success: false,
-        message: `This user doesn't have pending friend request from you`,
+        message: `You don't have pending friend request from this user`,
       });
     }
 
-    const friendshipRequestToRemove = await prisma.friendRequest.findFirst({
+    const friendshipRequestToReject = await prisma.friendRequest.findFirst({
       where: {
-        userId2: user.id,
+        userId1: user.id,
       },
     });
 
-    if (!friendshipRequestToRemove) {
-      return res.status(400).json({
+    if (!friendshipRequestToReject) {
+      return res.status(404).json({
         success: false,
-        message: 'Friend request not found',
+        message: 'Friendship request not found',
       });
     }
 
-    const removeFriendshipRequest = await prisma.friendRequest.delete({
+    const rejectFriendshipRequest = await prisma.friendRequest.delete({
       where: {
-        id: friendshipRequestToRemove.id,
+        id: friendshipRequestToReject.id,
       },
     });
 
     return res.status(200).json({
       success: true,
-      message: 'Successfully canceled your friend invitation',
+      message: 'Successfully rejected friend invitation',
     });
   } catch (error) {
     return res.status(500).json({
