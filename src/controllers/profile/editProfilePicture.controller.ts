@@ -18,6 +18,7 @@ export const editProfilePictureController = async (
   next: NextFunction
 ) => {
   try {
+    const loggedInUser = req.user;
     const profilePicture = req.file;
 
     if (!profilePicture) {
@@ -55,8 +56,7 @@ export const editProfilePictureController = async (
 
     const findPreviousProfilePicture = await prisma.profilePicture.findUnique({
       where: {
-        // @ts-ignore
-        profileId: req.user.profileId,
+        profileId: loggedInUser.profileId,
       },
     });
 
@@ -72,8 +72,7 @@ export const editProfilePictureController = async (
 
       const deletePreviousProfilePicture = await prisma.profilePicture.delete({
         where: {
-          // @ts-ignore
-          profileId: req.user.profileId,
+          profileId: loggedInUser.profileId,
         },
       });
     }
@@ -109,8 +108,7 @@ export const editProfilePictureController = async (
         fileType: finalFileToUpload.mimetype.split('/')[1],
         size: finalFileToUpload.size,
         key: result.Key,
-        // @ts-ignore
-        profileId: req.user.profileId,
+        profileId: loggedInUser.profileId,
       },
     });
 

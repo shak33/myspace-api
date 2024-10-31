@@ -7,7 +7,6 @@ export const withdrawFriendRequestController = async (
   next: NextFunction
 ) => {
   try {
-    // @ts-ignore
     const loggedInUser = req.user;
     const { friendId } = req.params;
 

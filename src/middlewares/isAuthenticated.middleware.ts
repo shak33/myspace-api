@@ -26,7 +26,7 @@ export const isAuthenticatedMiddleware = async (
     }
 
     const verify = jwt.verify(token, process.env.JWT_SECRET as string);
-    if (!verify) {
+    if (typeof verify !== 'object' || !('id' in verify)) {
       return res.status(401).json({
         success: false,
         message: 'Unauthorized',
@@ -35,7 +35,6 @@ export const isAuthenticatedMiddleware = async (
 
     const user = await prisma.user.findUnique({
       where: {
-        // @ts-ignore
         id: verify.id,
       },
       include: {
@@ -50,12 +49,11 @@ export const isAuthenticatedMiddleware = async (
       });
     }
 
-    // @ts-ignore
     req.user = {
       email: user.email,
       id: user.id,
       userId: user.userId,
-      profileId: user.profile?.profileId,
+      profileId: user.profile!.id,
       firstName: user.profile?.firstName,
       lastName: user.profile?.lastName,
     };

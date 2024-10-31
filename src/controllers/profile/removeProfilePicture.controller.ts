@@ -8,11 +8,10 @@ export const removeProfilePictureController = async (
   next: NextFunction
 ) => {
   try {
-    // @ts-ignore
-    const profileId = req.user.profileId;
+    const loggedInUser = req.user;
     const profilePicture = await prisma.profilePicture.findUnique({
       where: {
-        profileId,
+        profileId: loggedInUser.profileId,
       },
     });
 
@@ -34,7 +33,7 @@ export const removeProfilePictureController = async (
 
     const removeProfilePicture = await prisma.profilePicture.delete({
       where: {
-        profileId,
+        profileId: loggedInUser.profileId,
       },
     });
 
@@ -43,6 +42,7 @@ export const removeProfilePictureController = async (
       message: 'Picture has been removed',
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       success: false,
       message: 'Internal server error',
