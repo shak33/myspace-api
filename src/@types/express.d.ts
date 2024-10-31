@@ -7,9 +7,11 @@ declare global {
         email: string;
         id: number;
         userId: string;
-        profileId: number;
-        firstName?: string;
-        lastName?: string;
+        profile: {
+          id: number;
+          firstName?: string;
+          lastName?: string;
+        };
       };
     }
   }

@@ -5,7 +5,11 @@ import { SortDirection } from '@/models/SortDirection.enum';
 // TODO: There's a problem with accessing types based on conditional statement in 'include' in Prisma
 // TODO: https://github.com/prisma/prisma/issues/20871
 
-export const getProfileController = async (req: Request, res: Response) => {
+export const getProfileController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const loggedInUser = req.user;
     const { profileId } = req.params;

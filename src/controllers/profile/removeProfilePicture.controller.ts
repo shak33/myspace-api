@@ -11,7 +11,7 @@ export const removeProfilePictureController = async (
     const loggedInUser = req.user;
     const profilePicture = await prisma.profilePicture.findUnique({
       where: {
-        profileId: loggedInUser.profileId,
+        profileId: loggedInUser.profile.id,
       },
     });
 
@@ -33,7 +33,7 @@ export const removeProfilePictureController = async (
 
     const removeProfilePicture = await prisma.profilePicture.delete({
       where: {
-        profileId: loggedInUser.profileId,
+        profileId: loggedInUser.profile.id,
       },
     });
 

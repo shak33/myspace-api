@@ -78,9 +78,11 @@ export const isAuthenticatedMiddleware = async (
       email: user.email,
       id: user.id,
       userId: user.userId,
-      profileId: user.profile!.id,
-      firstName: user.profile?.firstName,
-      lastName: user.profile?.lastName,
+      profile: {
+        id: user.profile!.id,
+        firstName: user.profile?.firstName,
+        lastName: user.profile?.lastName,
+      },
     };
     next();
   } catch (error) {
