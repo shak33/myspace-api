@@ -7,6 +7,7 @@ import { isAuthenticatedMiddleware } from '@/middlewares/isAuthenticated.middlew
 
 import { editProfilePictureController } from '@/controllers/profile/editProfilePicture.controller';
 import { removeProfilePictureController } from '@/controllers/profile/removeProfilePicture.controller';
+import { getProfileController } from '@/controllers/profile/getProfile.controller';
 
 const router = express.Router();
 
@@ -23,6 +24,12 @@ router.delete(
   profileRoutes.uploadProfilePicture,
   isAuthenticatedMiddleware,
   removeProfilePictureController
+);
+
+router.get(
+  profileRoutes.getProfile,
+  isAuthenticatedMiddleware,
+  getProfileController
 );
 
 export default router;

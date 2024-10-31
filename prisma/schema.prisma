@@ -71,9 +71,10 @@ model Profile {
   id        Int    @id @default(autoincrement())
   profileId String @unique @default(uuid())
 
-  firstName String  @db.VarChar(100)
-  lastName  String  @db.VarChar(100)
-  bio       String? @db.VarChar(1000)
+  firstName    String  @db.VarChar(100)
+  lastName     String  @db.VarChar(100)
+  bio          String? @db.VarChar(1000)
+  publicAccess Boolean @default(false) @db.Boolean()
 
   user         User            @relation(fields: [userId], references: [id])
   userId       Int             @unique
