@@ -76,10 +76,10 @@ export const sendFriendRequestController = async (
 
     const sendFriendRequestMail = await sendMail({
       email: user.email,
-      subject: `MySpace.com - New friend request from ${loggedInUser.firstName} ${loggedInUser.lastName}`,
+      subject: `MySpace.com - New friend request from ${loggedInUser.profile.firstName} ${loggedInUser.profile.lastName}`,
       template: '/friend/friend-request.ejs',
       data: {
-        requestingUser: `${loggedInUser.firstName} ${loggedInUser.lastName}`,
+        requestingUser: `${loggedInUser.profile.firstName} ${loggedInUser.profile.lastName}`,
         receivingUser: `${user.profile?.firstName} ${user.profile?.lastName}`,
       },
     });

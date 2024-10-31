@@ -14,6 +14,7 @@ export const authRoutes = {
 // Profile preview and edit
 export const profileRoutes = {
   uploadProfilePicture: '/upload-profile-picture',
+  getProfile: '/:profileId',
 } as const;
 
 // Writing and editing posts
