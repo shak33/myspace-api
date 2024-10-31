@@ -71,7 +71,6 @@ export const getProfileController = async (
             lastName: profileData.profile?.lastName,
             email: profileData.email,
           },
-          // @ts-ignore
           posts: profileData.posts.map((post) => ({
             postId: post.postId,
             content: post.content,
@@ -115,12 +114,17 @@ export const getProfileController = async (
         ? {
             profile: true,
             posts: {
+              take: 10,
+              skip: 0,
               where: {
                 visible: true,
               },
+              orderBy: [
+                {
+                  createdAt: SortDirection.Desc,
+                },
+              ],
             },
-            friendsAsUser1: true,
-            friendsAsUser2: true,
           }
         : {
             profile: true,
@@ -134,6 +138,32 @@ export const getProfileController = async (
       });
     }
 
+    const friendsAsUser1 = user.profile?.publicAccess
+      ? await prisma.friend.findMany({
+          where: { userId1: profileData.id },
+          select: {
+            user2: {
+              select: {
+                userId: true,
+              },
+            },
+          },
+        })
+      : [];
+
+    const friendsAsUser2 = user.profile?.publicAccess
+      ? await prisma.friend.findMany({
+          where: { userId2: profileData.id },
+          select: {
+            user1: {
+              select: {
+                userId: true,
+              },
+            },
+          },
+        })
+      : [];
+
     if (profileData.profile?.publicAccess) {
       return res.status(200).json({
         success: true,
@@ -143,12 +173,15 @@ export const getProfileController = async (
             lastName: profileData.profile?.lastName,
           },
           // @ts-ignore
-          posts: profileData.posts,
+          posts: profileData.posts.map((post) => ({
+            postId: post.postId,
+            content: post.content,
+            createdAt: post.createdAt,
+            updatedAt: post.updatedAt,
+          })),
           friends: [
-            // @ts-ignore
-            ...profileData.friendsAsUser1,
-            // @ts-ignore
-            ...profileData.friendsAsUser2,
+            ...friendsAsUser1.map((friend) => friend.user2?.userId),
+            ...friendsAsUser2.map((friend) => friend.user1?.userId),
           ],
         },
       });
