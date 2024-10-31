@@ -13,6 +13,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model FriendRequest {
+  id Int @id @default(autoincrement())
+
+  userId1 Int
+  userId2 Int
+
+  user1 User @relation("User1FriendRequests", fields: [userId1], references: [id])
+  user2 User @relation("User2FriendRequests", fields: [userId2], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Friend {
+  id Int @id @default(autoincrement())
+
+  userId1 Int
+  userId2 Int
+
+  user1 User @relation("User1Friends", fields: [userId1], references: [id])
+  user2 User @relation("User2Friends", fields: [userId2], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
 model Post {
   id     Int    @id @default(autoincrement())
   postId String @unique @default(uuid())
@@ -67,6 +91,11 @@ model User {
   password String
   profile  Profile?
   posts    Post[]
+
+  sentFriendRequests     FriendRequest[] @relation("User1FriendRequests")
+  receivedFriendRequests FriendRequest[] @relation("User2FriendRequests")
+  friendsAsUser1         Friend[]        @relation("User1Friends")
+  friendsAsUser2         Friend[]        @relation("User2Friends")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

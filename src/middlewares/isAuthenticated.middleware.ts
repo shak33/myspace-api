@@ -56,6 +56,8 @@ export const isAuthenticatedMiddleware = async (
       id: user.id,
       userId: user.userId,
       profileId: user.profile?.profileId,
+      firstName: user.profile?.firstName,
+      lastName: user.profile?.lastName,
     };
     next();
   } catch (error) {
