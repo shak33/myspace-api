@@ -1,4 +1,8 @@
-import jwt from 'jsonwebtoken';
+import jwt, {
+  JsonWebTokenError,
+  JwtPayload,
+  TokenExpiredError,
+} from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '@/db';
 
@@ -25,7 +29,28 @@ export const isAuthenticatedMiddleware = async (
       });
     }
 
-    const verify = jwt.verify(token, process.env.JWT_SECRET as string);
+    let verify: JwtPayload | string;
+    try {
+      verify = jwt.verify(token, process.env.JWT_SECRET as string);
+    } catch (error) {
+      if (error instanceof TokenExpiredError) {
+        return res.status(401).json({
+          success: false,
+          message: 'Token has expired',
+        });
+      } else if (error instanceof JsonWebTokenError) {
+        return res.status(401).json({
+          success: false,
+          message: 'Unauthorized',
+        });
+      }
+
+      return res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+
     if (typeof verify !== 'object' || !('id' in verify)) {
       return res.status(401).json({
         success: false,
@@ -59,6 +84,7 @@ export const isAuthenticatedMiddleware = async (
     };
     next();
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       success: false,
       message: 'Internal server error',
