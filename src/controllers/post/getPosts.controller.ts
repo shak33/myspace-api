@@ -13,18 +13,17 @@ export const getPosts = async (req: Request, res: Response) => {
     const parsedPage = parseInt(page);
     const parsedPageSize = parseInt(pageSize);
     const { profileId } = req.params;
-    // @ts-ignore
-    const { userId, id } = req.user;
+    const loggedInUser = req.user;
     const authorId =
-      profileId === userId
-        ? id
+      profileId === loggedInUser.userId
+        ? loggedInUser.id
         : (
             await prisma.user.findUnique({
               where: { userId: profileId },
             })
           )?.id;
     const isTheSameUser = () => {
-      if (profileId === userId) {
+      if (profileId === loggedInUser.userId) {
         return undefined;
       }
 
@@ -57,6 +56,7 @@ export const getPosts = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       success: false,
       message: 'Internal server error',

@@ -7,8 +7,7 @@ export const updatePostController = async (
   next: NextFunction
 ) => {
   try {
-    // @ts-ignore
-    const userId = req.user.userId;
+    const loggedInUser = req.user;
     const { content, visible } = req.body;
     const postId = parseInt(req.params.postId);
 
@@ -25,7 +24,7 @@ export const updatePostController = async (
       });
     }
 
-    if (postToUpdate.authorId !== userId) {
+    if (postToUpdate.authorId !== loggedInUser.id) {
       return res.status(400).json({
         success: false,
         message: 'You are not an author of the post you are trying to edit',
@@ -35,7 +34,6 @@ export const updatePostController = async (
     const updatePost = await prisma.post.update({
       where: {
         id: postId,
-        authorId: userId,
       },
       data: {
         content,
@@ -48,6 +46,7 @@ export const updatePostController = async (
       message: 'Post has been updated',
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       success: false,
       message: 'Internal server error',
