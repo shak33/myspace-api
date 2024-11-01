@@ -38,6 +38,9 @@ export const getProfileController = async (
         return res.status(404).json({
           success: false,
           message: `User doesn't exist`,
+          data: {
+            userDoesntExist: true,
+          },
         });
       }
 
@@ -96,6 +99,11 @@ export const getProfileController = async (
             publicAccess: true,
           },
         },
+        blockingUsers: {
+          where: {
+            blockingUserId: loggedInUser.id,
+          },
+        },
       },
     });
 
@@ -103,6 +111,19 @@ export const getProfileController = async (
       return res.status(404).json({
         success: false,
         message: `User doesn't exist`,
+        data: {
+          userDoesntExist: true,
+        },
+      });
+    }
+
+    if (user.blockingUsers.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'You are blocked by this user',
+        data: {
+          blockedByUser: true,
+        },
       });
     }
 
@@ -135,6 +156,9 @@ export const getProfileController = async (
       return res.status(404).json({
         success: false,
         message: `User doesn't exist`,
+        data: {
+          userDoesntExist: true,
+        },
       });
     }
 

@@ -13,6 +13,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model BlockedUser {
+  id Int @id @default(autoincrement())
+
+  blockingUserId  Int
+  blockedByUserId Int
+
+  blockingUser User @relation("BlockingUsers", fields: [blockingUserId], references: [id])
+  blockedUser  User @relation("BlockedByUsers", fields: [blockedByUserId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
 model FriendRequest {
   id Int @id @default(autoincrement())
 
@@ -97,6 +109,8 @@ model User {
   receivedFriendRequests FriendRequest[] @relation("User2FriendRequests")
   friendsAsUser1         Friend[]        @relation("User1Friends")
   friendsAsUser2         Friend[]        @relation("User2Friends")
+  blockingUsers          BlockedUser[]   @relation("BlockingUsers")
+  blockedByUsers         BlockedUser[]   @relation("BlockedByUsers")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
