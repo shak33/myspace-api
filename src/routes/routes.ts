@@ -4,6 +4,7 @@ export const API_ROUTE_PROFILE = `${API_BASE_URL}/profile`;
 export const API_ROUTE_POST = `${API_BASE_URL}/post`;
 export const API_ROUTE_POSTS = `${API_BASE_URL}/posts`;
 export const API_ROUTE_FRIEND = `${API_BASE_URL}/friend`;
+export const API_ROUTE_USER = `${API_BASE_URL}/user`;
 
 // Auth
 export const authRoutes = {
@@ -35,4 +36,8 @@ export const friendRoutes = {
   removeFriend: '/remove/:friendId',
   rejectFriendRequest: '/reject-request/:friendId',
   acceptFriendRequest: '/accept-request/:friendId',
+} as const;
+
+export const userRoutes = {
+  blockUser: '/block/:userId',
 } as const;
