@@ -39,6 +39,9 @@ export const blockUserController = async (
       return res.status(404).json({
         success: false,
         message: 'User not found',
+        data: {
+          userDoesntExist: true,
+        },
       });
     }
 
@@ -46,6 +49,9 @@ export const blockUserController = async (
       return res.status(400).json({
         success: false,
         message: 'You have already blocked this user',
+        data: {
+          alreadyBlockedThisUser: true,
+        },
       });
     }
 
@@ -55,6 +61,52 @@ export const blockUserController = async (
         blockedByUserId: user.id,
       },
     });
+
+    const friendshipToRemove = await prisma.friend.findFirst({
+      where: {
+        OR: [
+          {
+            userId1: loggedInUser.id,
+            userId2: user.id,
+          },
+          {
+            userId1: user.id,
+            userId2: loggedInUser.id,
+          },
+        ],
+      },
+    });
+
+    if (friendshipToRemove) {
+      const deleteFriendship = await prisma.friend.delete({
+        where: {
+          id: friendshipToRemove.id,
+        },
+      });
+    }
+
+    const friendRequestToRemove = await prisma.friendRequest.findFirst({
+      where: {
+        OR: [
+          {
+            userId1: loggedInUser.id,
+            userId2: user.id,
+          },
+          {
+            userId1: user.id,
+            userId2: loggedInUser.id,
+          },
+        ],
+      },
+    });
+
+    if (friendRequestToRemove) {
+      const deleteFriendship = await prisma.friendRequest.delete({
+        where: {
+          id: friendRequestToRemove.id,
+        },
+      });
+    }
 
     return res.status(200).json({
       success: true,
