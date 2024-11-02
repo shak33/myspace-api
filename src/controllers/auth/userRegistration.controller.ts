@@ -27,6 +27,32 @@ export const userRegistrationController = async (
       });
     }
 
+    try {
+      const sendRegistrationMail = await sendMail({
+        email,
+        subject: 'Welcome to MySpace!',
+        template: '/auth/registration-notification.ejs',
+        data: {
+          user: {
+            firstName,
+            lastName,
+          },
+          loginUrl: `${process.env.CLIENT_URL}/auth/login`,
+        },
+      });
+    } catch (error) {
+      // @ts-ignore
+      if (error.responseCode === 554) {
+        return res.status(400).json({
+          success: false,
+          message: `Given domain doesn't exist`,
+          errors: {
+            fields: [{ email: 'Given domain doesnt exist' }],
+          },
+        });
+      }
+    }
+
     const hashedPassword = bcrypt.hashSync(password, 10);
 
     const newUser = await prisma.user.create({
@@ -43,20 +69,6 @@ export const userRegistrationController = async (
     });
 
     const token = createSecretToken(newUser.id);
-
-    const sendRegistrationMail = await sendMail({
-      email,
-      subject: 'Welcome to MySpace!',
-      template: '/auth/registration-notification.ejs',
-      data: {
-        user: {
-          firstName,
-          lastName,
-        },
-        loginUrl: `${process.env.CLIENT_URL}/auth/login`,
-      },
-    });
-
     return res.status(201).json({
       success: true,
       message: 'User registered successfully',
@@ -65,6 +77,7 @@ export const userRegistrationController = async (
       },
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       success: false,
       message: 'Internal server error',

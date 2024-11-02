@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import { server } from 'globalSetup.mocha';
 
-import { prisma } from '@/db';
 import { profileRoutes } from '@/routes/routes';
 import { createUserFactory } from '@/tests/factories/user/createUser.factory';
 import { loginAndGetTokenUtil } from '@/tests/utils/loginAndGetToken.util';
@@ -13,13 +12,12 @@ import {
 import { generateProfilePictureToUploadUtil } from '@/tests/routes/profile/utils/generateProfilePictureToUpload.util';
 import { uploadProfilePictureUtil } from '@/tests/routes/profile/utils/uploadProfilePicture.util';
 import { removeProfilePictureUtil } from '@/tests/routes/profile/utils/removeProfilePicture.util';
+import { clearDatabaseUtil } from '@/tests/utils/clearDatabase.util';
 
 describe('ROUTE /api/v1/profile', () => {
   describe(`${profileRoutes.uploadProfilePicture} (PUT)`, () => {
     before(async () => {
-      await prisma.profilePicture.deleteMany();
-      await prisma.profile.deleteMany();
-      await prisma.user.deleteMany({});
+      await clearDatabaseUtil();
       await createUserFactory();
     });
 
@@ -75,9 +73,7 @@ describe('ROUTE /api/v1/profile', () => {
 
   describe(`${profileRoutes.uploadProfilePicture} (DELETE)`, () => {
     before(async () => {
-      await prisma.profilePicture.deleteMany();
-      await prisma.profile.deleteMany();
-      await prisma.user.deleteMany({});
+      await clearDatabaseUtil();
       await createUserFactory();
     });
 
