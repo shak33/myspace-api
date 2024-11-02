@@ -2,22 +2,20 @@ import request from 'supertest';
 import { expect } from 'chai';
 import { server } from 'globalSetup.mocha';
 
-import { prisma } from '@/db';
 import { API_ROUTE_AUTH, authRoutes } from '@/routes/routes';
 import { createUserFactory } from '@/tests/factories/user/createUser.factory';
 
 import registerUserData from '@/tests/fixtures/user/registerUser.json';
 import loginUserData from '@/tests/fixtures/user/loginUser.json';
+import { clearDatabaseUtil } from '@/tests/utils/clearDatabase.util';
 
 describe('ROUTE /api/v1/auth', () => {
   describe(authRoutes.register, () => {
     before(async () => {
-      await prisma.profilePicture.deleteMany();
-      await prisma.profile.deleteMany();
-      await prisma.user.deleteMany();
+      await clearDatabaseUtil();
     });
 
-    it('should return 400 with errored field email', async () => {
+    it(`should return 400 with errored field email - email validation error`, async () => {
       const res = await request(server)
         .post(`${API_ROUTE_AUTH}${authRoutes.register}`)
         .send({
@@ -29,7 +27,19 @@ describe('ROUTE /api/v1/auth', () => {
       expect(res.body.errors.fields[0]).to.have.property('email');
     });
 
-    it('should return 200 with token', async () => {
+    it(`should return 400 with errored field email - domain doesn't exist`, async () => {
+      const res = await request(server)
+        .post(`${API_ROUTE_AUTH}${authRoutes.register}`)
+        .send({
+          ...registerUserData,
+          email: 'john123@doejohndoejohn.com',
+        });
+
+      expect(res.status).to.equal(400);
+      expect(res.body.errors.fields[0]).to.have.property('email');
+    });
+
+    it('should return 201 with token', async () => {
       const res = await request(server)
         .post(`${API_ROUTE_AUTH}${authRoutes.register}`)
         .send(registerUserData);
@@ -50,8 +60,7 @@ describe('ROUTE /api/v1/auth', () => {
 
   describe(authRoutes.login, () => {
     before(async () => {
-      await prisma.profile.deleteMany();
-      await prisma.user.deleteMany({});
+      await clearDatabaseUtil();
       await createUserFactory();
     });
 

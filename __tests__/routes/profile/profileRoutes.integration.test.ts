@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import { server } from 'globalSetup.mocha';
 
-import { prisma } from '@/db';
 import { profileRoutes } from '@/routes/routes';
 import { createUserFactory } from '@/tests/factories/user/createUser.factory';
 import { loginAndGetTokenUtil } from '@/tests/utils/loginAndGetToken.util';
@@ -13,18 +12,19 @@ import {
 import { generateProfilePictureToUploadUtil } from '@/tests/routes/profile/utils/generateProfilePictureToUpload.util';
 import { uploadProfilePictureUtil } from '@/tests/routes/profile/utils/uploadProfilePicture.util';
 import { removeProfilePictureUtil } from '@/tests/routes/profile/utils/removeProfilePicture.util';
+import { clearDatabaseUtil } from '@/tests/utils/clearDatabase.util';
 
 describe('ROUTE /api/v1/profile', () => {
   describe(`${profileRoutes.uploadProfilePicture} (PUT)`, () => {
+    let token: string;
+
     before(async () => {
-      await prisma.profilePicture.deleteMany();
-      await prisma.profile.deleteMany();
-      await prisma.user.deleteMany({});
+      await clearDatabaseUtil();
       await createUserFactory();
+      token = await loginAndGetTokenUtil(server);
     });
 
     it('should return 400 with file size validation error', async () => {
-      const token = await loginAndGetTokenUtil(server);
       const largeFileBuffer = Buffer.alloc(PROFILE_PICTURE_MAX_FILE_SIZE + 1);
       const res = await uploadProfilePictureUtil({
         token,
@@ -40,7 +40,6 @@ describe('ROUTE /api/v1/profile', () => {
     });
 
     it('should return 400 with file type validation error', async () => {
-      const token = await loginAndGetTokenUtil(server);
       const invalidFileBuffer = Buffer.from(
         'This is a test file content',
         'utf-8'
@@ -59,7 +58,6 @@ describe('ROUTE /api/v1/profile', () => {
     });
 
     it('should return 201 with success set to true', async () => {
-      const token = await loginAndGetTokenUtil(server);
       const buffer = await generateProfilePictureToUploadUtil();
       const res = await uploadProfilePictureUtil({
         token,
@@ -74,15 +72,15 @@ describe('ROUTE /api/v1/profile', () => {
   });
 
   describe(`${profileRoutes.uploadProfilePicture} (DELETE)`, () => {
+    let token: string;
+    
     before(async () => {
-      await prisma.profilePicture.deleteMany();
-      await prisma.profile.deleteMany();
-      await prisma.user.deleteMany({});
+      await clearDatabaseUtil();
       await createUserFactory();
+      token = await loginAndGetTokenUtil(server);
     });
 
     it(`should return 410 on profile picture removal, if there's no photo`, async () => {
-      const token = await loginAndGetTokenUtil(server);
       const res = await removeProfilePictureUtil(token);
 
       expect(res.status).to.equal(410);
@@ -92,7 +90,6 @@ describe('ROUTE /api/v1/profile', () => {
     });
 
     it('should return 200 on profile picture removal that exists', async () => {
-      const token = await loginAndGetTokenUtil(server);
       const buffer = await generateProfilePictureToUploadUtil();
       const uploadedProfilePicture = await uploadProfilePictureUtil({
         token,
