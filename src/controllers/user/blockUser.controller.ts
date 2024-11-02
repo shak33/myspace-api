@@ -21,18 +21,6 @@ export const blockUserController = async (
       where: {
         userId,
       },
-      include: {
-        blockingUsers: {
-          where: {
-            blockedByUserId: loggedInUser.id,
-          },
-        },
-        blockedByUsers: {
-          where: {
-            blockingUserId: loggedInUser.id,
-          },
-        },
-      },
     });
 
     if (!user) {
@@ -45,7 +33,14 @@ export const blockUserController = async (
       });
     }
 
-    if (user.blockedByUsers.length > 0) {
+    const existingBlock = await prisma.blockedUser.findFirst({
+      where: {
+        blockingUserId: user.id,
+        blockedByUserId: loggedInUser.id,
+      },
+    });
+
+    if (existingBlock) {
       return res.status(400).json({
         success: false,
         message: 'You have already blocked this user',
@@ -57,8 +52,8 @@ export const blockUserController = async (
 
     const blockUser = await prisma.blockedUser.create({
       data: {
-        blockingUserId: loggedInUser.id,
-        blockedByUserId: user.id,
+        blockedByUserId: loggedInUser.id,
+        blockingUserId: user.id,
       },
     });
 

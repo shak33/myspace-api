@@ -2,12 +2,16 @@ import bcrypt from 'bcrypt';
 import { prisma } from '@/db';
 import registerUserData from '@/tests/fixtures/user/registerUser.json';
 
-export const createUserFactory = async () => {
+type UserType = {
+  email?: string;
+};
+
+export const createUserFactory = async (user: UserType = {}) => {
   const hashedPassword = bcrypt.hashSync(registerUserData.password, 10);
 
-  return await prisma.user.create({
+  return prisma.user.create({
     data: {
-      email: registerUserData.email,
+      email: user.email ?? registerUserData.email,
       password: hashedPassword,
       profile: {
         create: {
