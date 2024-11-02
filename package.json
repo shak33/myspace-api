@@ -6,7 +6,7 @@
     "dev": "TS_NODE_PROJECT=tsconfig.development.json ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/server.ts --log-level debug",
     "build": "npx prisma generate && tsc -p tsconfig.production.json",
     "start": "node -r ts-node/register/transpile-only -r tsconfig-paths/register dist/server.js",
-    "integration-tests": "dotenv -e .env.test -- env TS_NODE_PROJECT=tsconfig.development.json NODE_ENV=development mocha -r ts-node/register -r tsconfig-paths/register '__tests__/**/*.test.ts'",
+    "integration-tests": "dotenv -e .env.test -- env TS_NODE_PROJECT=tsconfig.testing.json NODE_ENV=development mocha -r ts-node/register -r tsconfig-paths/register '__tests__/**/*.test.ts'",
     "db:migrate:test": "dotenv -e .env.test -- prisma migrate deploy"
   },
   "keywords": [],
