@@ -24,7 +24,7 @@ describe('ROUTE /api/v1/auth', () => {
         });
 
       expect(res.status).to.equal(400);
-      expect(res.body.errors.fields[0]).to.have.property('email');
+      expect(res.body.errors.fields).to.have.property('email');
     });
 
     it(`should return 400 with errored field email - domain doesn't exist`, async () => {
@@ -36,7 +36,7 @@ describe('ROUTE /api/v1/auth', () => {
         });
 
       expect(res.status).to.equal(400);
-      expect(res.body.errors.fields[0]).to.have.property('email');
+      expect(res.body.errors.fields).to.have.property('email');
     });
 
     it('should return 201 with token', async () => {

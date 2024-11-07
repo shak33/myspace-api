@@ -12,9 +12,14 @@ export const requestValidationMiddleware =
           success: false,
           message: 'Validation error',
           errors: {
-            fields: error.errors.map((err) => ({
-              [`${err.path}`]: err.message,
-            })),
+            fields: error.errors.reduce(
+              (acc, err) => {
+                const path = err.path.join('.');
+                acc[path] = err.message;
+                return acc;
+              },
+              {} as Record<string, string>
+            ),
           },
         });
       }

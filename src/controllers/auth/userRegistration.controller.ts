@@ -47,7 +47,7 @@ export const userRegistrationController = async (
           success: false,
           message: `Given domain doesn't exist`,
           errors: {
-            fields: [{ email: 'Given domain doesnt exist' }],
+            fields: { email: 'Given domain doesnt exist' },
           },
         });
       }

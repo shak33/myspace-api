@@ -9,16 +9,16 @@ export const updatePostController = async (
   try {
     const loggedInUser = req.user;
     const { content, visible } = req.body;
-    const postId = parseInt(req.params.postId);
+    const { postId } = req.params;
 
     const postToUpdate = await prisma.post.findUnique({
       where: {
-        id: postId,
+        postId,
       },
     });
 
     if (!postToUpdate) {
-      return res.status(410).json({
+      return res.status(404).json({
         success: false,
         message: `There's no post with such ID`,
       });
@@ -33,7 +33,7 @@ export const updatePostController = async (
 
     const updatePost = await prisma.post.update({
       where: {
-        id: postId,
+        id: postToUpdate.id,
       },
       data: {
         content,
@@ -44,6 +44,13 @@ export const updatePostController = async (
     return res.status(200).json({
       success: true,
       message: 'Post has been updated',
+      data: {
+        post: {
+          id: postId,
+          content,
+          visible,
+        },
+      },
     });
   } catch (error) {
     console.log(error);

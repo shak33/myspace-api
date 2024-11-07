@@ -20,7 +20,7 @@ router.post(
   createPostController
 );
 
-router.patch(
+router.put(
   postRoutes.updatePost,
   isAuthenticatedMiddleware,
   requestValidationMiddleware(updatePostValidation),
