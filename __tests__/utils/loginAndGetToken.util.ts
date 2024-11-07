@@ -2,12 +2,14 @@ import request from 'supertest';
 import { Server } from 'http';
 import loginUserData from '@/tests/fixtures/user/loginUser.json';
 
-export async function loginAndGetTokenUtil(server: Server) {
+export async function loginAndGetTokenUtil(server: Server, email?: string) {
   try {
-    const res = await request(server).post('/api/v1/auth/login').send({
-      email: loginUserData.email,
-      password: loginUserData.password,
-    });
+    const res = await request(server)
+      .post('/api/v1/auth/login')
+      .send({
+        email: email ?? loginUserData.email,
+        password: loginUserData.password,
+      });
 
     if (res.status !== 200) {
       throw new Error(`Login failed with status: ${res.status}`);

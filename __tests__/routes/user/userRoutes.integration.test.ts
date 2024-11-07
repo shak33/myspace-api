@@ -4,7 +4,7 @@ import { server } from 'globalSetup.mocha';
 import { prisma } from '@/db';
 import { User } from '@prisma/client';
 
-import { API_ROUTE_USER, authRoutes, userRoutes } from '@/routes/routes';
+import { API_ROUTE_USER, userRoutes } from '@/routes/routes';
 import { clearDatabaseUtil } from '@/tests/utils/clearDatabase.util';
 import { createUserFactory } from '@/tests/factories/user/createUser.factory';
 import { loginAndGetTokenUtil } from '@/tests/utils/loginAndGetToken.util';

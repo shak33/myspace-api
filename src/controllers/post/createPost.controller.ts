@@ -21,6 +21,13 @@ export const createPostController = async (
     return res.status(201).json({
       success: true,
       message: 'Post has been added',
+      data: {
+        post: {
+          postId: createPost.postId,
+          content,
+          visible,
+        },
+      },
     });
   } catch (error) {
     console.log(error);
